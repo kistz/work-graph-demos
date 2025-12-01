@@ -234,7 +234,7 @@ void FillRectangleNode(
      *    Add a check to test if "dispatchThreadId" is within the rectangle size (supplied by the input record).
      */
     if (// Check if pixel is within bounds of render target.
-        all(dispatchThreadId < record.size) &&
+        all(dispatchThreadId < record.rect_size) &&
         all(pixel >= 0) && all(pixel < RenderSize)) {
         RenderTarget[pixel] = record.color;
     }

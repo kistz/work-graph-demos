@@ -295,6 +295,17 @@ void MergeRectangleNode(
              *    the merged rectangle here.
              */
 
+            ThreadNodeOutputRecords<RectangleRecord> rectangleOutputRecord =
+                output.GetThreadNodeOutputRecords(1);
+
+    
+            rectangleOutputRecord.Get().topLeft      = topLeft;
+            rectangleOutputRecord.Get().color        = inputRecords.Get(0).color;
+            rectangleOutputRecord.Get().rect_size        = size;
+            rectangleOutputRecord.Get().dispatch_size        = DivideAndRoundUp(size,8);
+
+            rectangleOutputRecord.OutputComplete();
+
             /*
              * If we found two rectangles to merge, we can end the node here and thus
              * skip passing the input records through to the "FillRectangle" node.

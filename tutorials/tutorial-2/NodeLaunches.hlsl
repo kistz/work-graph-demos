@@ -120,7 +120,7 @@
 // Constants that define the layout and positioning of rectangles.
 static const int  RectangleSize            = 48;
 // Size increases with every rectangle.
-static const int  RectangleSizeStep        = 4;
+static const int  RectangleSizeStep        = 40;
 static const int2 RectangleCursorOffset    = int2(-8, -20);
 static const int2 InitialRectanglePosition = int2(20, 60);
 
@@ -339,7 +339,7 @@ void MergeRectangleNode(
 void GetRectanglePositionAndSize(in uint y_index,in uint index, out int2 position, out int2 size) {
     position = InitialRectanglePosition +
                int2(index, y_index) * RectangleSize +
-               int2(index * (index - 1) / 2, 10*y_index) * RectangleSizeStep;
+               int2((index * (index - 1) / 2 )* RectangleSizeStep, 40*y_index);
     size     = RectangleSize.xx + int2(index, 0) * RectangleSizeStep;
 }
 

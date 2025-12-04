@@ -147,16 +147,19 @@ struct RectangleRecord {
 };
 
 // Helper function to compute the "position" and "size" for the rectangles from an "index".
-void GetRectanglePositionAndSize(in uint index, out int2 position, out int2 size);
+void GetRectanglePositionAndSize(in uint y_index,in uint index, out int2 position, out int2 size);
 
 [Shader("node")]
 [NodeIsProgramEntry]
 [NodeLaunch("broadcasting")]
 // [Task 4]: Increment the x dimension of the dispatch grid and observe the changes to the rectangle merging.
-[NodeDispatchGrid(1, 1, 1)]
+[NodeDispatchGrid(3, 1, 1)]
 [NumThreads(5, 1, 1)]
 void Entry(
-    uint dispatchThreadId : SV_DispatchThreadID,
+    // SV_DispatchThreadID is the combination of NodeDispatchGrid(3,1,1) and NumThreads(5,1,1)
+    // To sepearate them in x and y direction a little easier we take the GroupID and the GroupThreadID
+    uint groupId : SV_GroupID, // Comes from NodeDispatchGrid() uint because only x axis
+    uint threadId : SV_GroupThreadID, //Comes from NumThreads uint because only x axis
 
     [MaxRecords(5)]
     [NodeId("PrintLabel")]
@@ -174,13 +177,13 @@ void Entry(
     // Rectangle position and size for each thread
     int2 threadRectanglePosition;
     int2 threadRectangleSize;
-    GetRectanglePositionAndSize(dispatchThreadId, threadRectanglePosition, threadRectangleSize);
+    GetRectanglePositionAndSize(groupId,threadId, threadRectanglePosition, threadRectangleSize);
 
     ThreadNodeOutputRecords<PrintLabelRecord> printLabelRecord =
         printLabelOutput.GetThreadNodeOutputRecords(1);
 
     printLabelRecord.Get().topLeft = threadRectanglePosition;
-    printLabelRecord.Get().index   = dispatchThreadId;
+    printLabelRecord.Get().index   = threadId;
 
     printLabelRecord.OutputComplete();
 
@@ -197,7 +200,7 @@ void Entry(
      *     calculation.
      */
     rectangleOutputRecord.Get().topLeft      = threadRectanglePosition;
-    rectangleOutputRecord.Get().color        = UintToColor(dispatchThreadId);
+    rectangleOutputRecord.Get().color        = UintToColor(threadId);
     rectangleOutputRecord.Get().rect_size        = threadRectangleSize;
     rectangleOutputRecord.Get().dispatch_size        = DivideAndRoundUp(threadRectangleSize,8);
 
@@ -333,11 +336,11 @@ void MergeRectangleNode(
 // ================= Helper Functions =================
 
 // Helper function to compute position and size for the rectangles.
-void GetRectanglePositionAndSize(in uint index, out int2 position, out int2 size) {
+void GetRectanglePositionAndSize(in uint y_index,in uint index, out int2 position, out int2 size) {
     position = InitialRectanglePosition +
-               int2(index, 0) * RectangleSize +
-               int2(index * (index - 1) / 2, 0) * RectangleSizeStep;
-    size     = RectangleSize.xx + int2(index, 0) * RectangleSizeStep;
+               int2(index, y_index*1.5) * RectangleSize +
+               int2(index * (index - 1) / 2, y_index*1.5) * RectangleSizeStep;
+    size     = RectangleSize.xx + int2(index, y_index*1.5) * RectangleSizeStep;
 }
 
 // Helper function to check if two rectangles share a vertical edge.

@@ -69,6 +69,14 @@ struct RenderSceneRecord {
 
 // [Task 1]: Define your record struct to shade each pixel here.
 
+struct PixelShadeRecord {
+    Ray ray;
+
+    float hit_distance;
+
+
+};
+
 /* [Task 2]: Declare your material shading nodes here, using the record you just defined as an input.
  *           Revisit tutorial-2 and choose a fitting node launch mode for shading a pixel.
  *           You'll need three different nodes for each of the different materials.
@@ -76,6 +84,17 @@ struct RenderSceneRecord {
  *           Tip: You can use [NodeId("...", (uint)RayHit::Material::...)] to use the "Material" enum instead of
  *           hard-coded values.
  */
+
+[NodeLaunch("thread")]
+[NodeId("ShadeMat", (uint)RayHit::Material::Sky)]
+//[NumThreads(1, 1, 1)] implicit
+void ShadeMatSky(
+    ThreadNodeInputRecord<PixelShadeRecord> input
+) {
+    const PixelShadeRecord record=input.Get();
+    
+}
+
 
 [Shader("node")]
 [NodeLaunch("broadcasting")]

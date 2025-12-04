@@ -340,7 +340,7 @@ void GetRectanglePositionAndSize(in uint y_index,in uint index, out int2 positio
     position = InitialRectanglePosition +
                int2(index, y_index) * RectangleSize +
                int2(index * (index - 1) / 2, 10*y_index) * RectangleSizeStep;
-    size     = RectangleSize.xx + int2(index, y_index) * RectangleSizeStep;
+    size     = RectangleSize.xx + int2(index, 0) * RectangleSizeStep;
 }
 
 // Helper function to check if two rectangles share a vertical edge.

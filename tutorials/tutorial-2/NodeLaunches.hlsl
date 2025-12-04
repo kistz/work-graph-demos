@@ -153,7 +153,7 @@ void GetRectanglePositionAndSize(in uint y_index,in uint index, out int2 positio
 [NodeIsProgramEntry]
 [NodeLaunch("broadcasting")]
 // [Task 4]: Increment the x dimension of the dispatch grid and observe the changes to the rectangle merging.
-[NodeDispatchGrid(3, 1, 1)]
+[NodeDispatchGrid(6, 1, 1)]
 [NumThreads(5, 1, 1)]
 void Entry(
     // SV_DispatchThreadID is the combination of NodeDispatchGrid(3,1,1) and NumThreads(5,1,1)
@@ -338,9 +338,9 @@ void MergeRectangleNode(
 // Helper function to compute position and size for the rectangles.
 void GetRectanglePositionAndSize(in uint y_index,in uint index, out int2 position, out int2 size) {
     position = InitialRectanglePosition +
-               int2(index, y_index*1.5) * RectangleSize +
-               int2(index * (index - 1) / 2, y_index*1.5) * RectangleSizeStep;
-    size     = RectangleSize.xx + int2(index, y_index*1.5) * RectangleSizeStep;
+               int2(index, y_index) * RectangleSize +
+               int2(index * (index - 1) / 2, 10*y_index) * RectangleSizeStep;
+    size     = RectangleSize.xx + int2(index, y_index) * RectangleSizeStep;
 }
 
 // Helper function to check if two rectangles share a vertical edge.
